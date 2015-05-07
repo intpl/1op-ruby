@@ -74,9 +74,18 @@ class Client
       @screen.write "stopped awaiting local messages..." if DEBUG
     end
   end
+
+  #def refresh
+  #  wrefresh(@stdscr)
+  #end
 end
 
-screen = Screen.new
-server = TCPSocket.new("localhost", PORT)
-screen.write "connected to: " + server.addr[2] + ":" + server.addr[1].to_s if server
-Client.new(server, screen)
+begin
+  screen = Screen.new
+  server = TCPSocket.new("localhost", PORT)
+  screen.write "connected to: " + server.addr[2] + ":" + server.addr[1].to_s if server
+  client = Client.new(server, screen)
+ensure
+  #client.refresh
+  endwin
+end
