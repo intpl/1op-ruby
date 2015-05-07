@@ -8,31 +8,33 @@ PORT = 31337
 
 class Screen
   def initialize
-      @stdscr = initscr
-      cbreak
-      noecho
+    @stdscr = initscr
+    @msgwin = newwin(2, 80, 0, 1)
+    wborder(@msgwin, 0, 0, 0, 0, 0, 0, 0, 0)
+    cbreak
+    noecho
 
-      self.write "1op client"
-      wrefresh(@stdscr)
+    write "\n\n"
+    wrefresh(@stdscr)
   end
 
   def write(msg)
-    waddstr(@stdscr, "[chat window] " + msg + "\n")
+    waddstr(@stdscr, msg + "\n")
     wrefresh(@stdscr)
+    wrefresh(@msgwin)
   end
 
   def read
     msg = []
     loop do
-      key = FFI::NCurses.getch.chr  # read and convert to a String
-      FFI::NCurses.waddstr(@stdscr, "#{key}")
-      FFI::NCurses.wrefresh(@stdscr)
+      wrefresh(@stdscr)
+      wrefresh(@msgwin)
+      key = getch.chr  # read and convert to a String
       msg << key
+      waddstr(@msgwin, key)
       return msg.join if key == "\n"
     end
   end
-
-  wrefresh(@stdscr)
 end
 
 class Client
@@ -75,6 +77,6 @@ class Client
 end
 
 screen = Screen.new
-server = TCPSocket.new("localhost", 31337)
+server = TCPSocket.new("localhost", PORT)
 screen.write "connected to: " + server.addr[2] + ":" + server.addr[1].to_s if server
 Client.new(server, screen)

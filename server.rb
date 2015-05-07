@@ -12,6 +12,7 @@ waiter = Thread.new do
   gets
   exit
 end
+
 def log(msg, client = "")
   msg = msg
   msg += "[#{client}]" unless client.empty?
@@ -19,7 +20,7 @@ def log(msg, client = "")
 end
 
 def greeting
-    return "1op:ruby-playground #{VERSION}"
+  return "1op:ruby-playground #{VERSION}"
 end
 
 # this will be changed
@@ -37,6 +38,7 @@ while (session = server.accept)
       my_session.puts msg
       log "sent: #{msg}"
     end
+
     log "closing session #{my_session}"
     my_session.close
   end
