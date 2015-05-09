@@ -1,13 +1,17 @@
-#!/usr/bin/env ruby
-require 'socket'
 require 'ffi-ncurses'
-include FFI::NCurses
-
-DEBUG = true
-PORT = 31337
-INPUT_DELAY_MS = 100
 
 class Screen
+  include FFI::NCurses
+  #extend endwin
+
+  def self.endwin
+    endwin
+  end
+
+  def self.getch
+    getch
+  end
+
   def initialize
     @stdscr = initscr
     @rows = getmaxy(@stdscr)
@@ -22,7 +26,7 @@ class Screen
     cbreak
     qiflush
     noecho
-    # We're using wtimeout to stop getch from blocking refreshes, so if 
+    # We're using wtimeout to stop getch from blocking refreshes, so if
     # no input occurs in INPUT_DELAY_MS then run the loop again
     wtimeout(@stdscr, INPUT_DELAY_MS)
     # Oh really, fuck this one. We want getch to be blocking so it doesn't
@@ -34,20 +38,20 @@ class Screen
   end
 
   def draw
-#    FIXME: Resize our window
-#    y, x = getyx(@stdscr)
-#    if (y != @cols) || (x != @rows)
-#      @cols = y
-#      @rows = x
+    #    FIXME: Resize our window
+    #    y, x = getyx(@stdscr)
+    #    if (y != @cols) || (x != @rows)
+    #      @cols = y
+    #      @rows = x
 
-#      wresize(@chatwin, y - @msgsize, x)
-#      wresize(@msgwin, @msgsize, x)
-#      mvwin(@msgwin, y - @msgsize, 0)
+    #      wresize(@chatwin, y - @msgsize, x)
+    #      wresize(@msgwin, @msgsize, x)
+    #      mvwin(@msgwin, y - @msgsize, 0)
 
-#      wclear(@stdscr)
-#      wclear(@chatwin)
-#      wclear(@msgwin)
-#    end
+    #      wclear(@stdscr)
+    #      wclear(@chatwin)
+    #      wclear(@msgwin)
+    #    end
 
     box(@chatwin, 0, 0)
     box(@msgwin, 0, 0)
@@ -56,9 +60,9 @@ class Screen
     wmove(@msgwin, 1, 2)
 
     #clearok(@msgwin, true)
-   refresh
-#    wrefresh(@chatwin)
-#    wrefresh(@msgwin)
+    refresh
+    #    wrefresh(@chatwin)
+    #    wrefresh(@msgwin)
   end
 
   def get_msg
@@ -89,7 +93,7 @@ class Screen
 
   def receive(msg)
     return if msg == nil
-   # wrefresh(@msgwin)
+    # wrefresh(@msgwin)
 
     # Not reached message limit in window
     if (@chatnum < @rows - @msgsize - 2)
@@ -113,39 +117,4 @@ class Screen
     wrefresh(@chatwin)
     wrefresh(@msgwin)
   end
-end
-
-begin
-  server = TCPSocket.new("localhost", PORT)
-  return unless server
-
-  screen = Screen.new
-  screen.receive "connected to: " + server.addr[2] + ":" + server.addr[1].to_s
-
-  server_listener = Thread.new do
-    loop do
-      msg = server.gets.chomp
-      screen.receive msg
-    end
-  end
-
-  # Main loop
-  # Outside Screen class so we can use initialize Screen correctly and block on getch
-  loop do
-    c = getch
-    exit if c == 3 #FIXME: interrupt, silly ncurses swalloing every control char
-
-    if c.between?(0, 255)
-      if (c.chr != "\n")
-        screen.append(c)
-      else
-        server.puts screen.get_msg
-        screen.flush_msg
-      end
-#    screen.draw
-    end
-  end
-
-ensure
-  endwin
 end

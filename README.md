@@ -1,5 +1,18 @@
 # 1op (open once)
 
+## Ruby 1op implementation
+
+#### To start a server
+    ./oneop.rb -s
+
+#### To start a client
+    ./oneop.rb -c
+
+#### To start both
+    ./oneop.rb -sc
+or
+    ./oneop.rb -c -s
+
 ## Basic protocol
 
 1. User enters the website. If he generates a new chat room he becomes administrator.

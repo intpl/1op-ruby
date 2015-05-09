@@ -1,0 +1,12 @@
+Gem::Specification.new do |s|
+  s.name        = 'oneop'
+  s.version     = '0.0.1'
+  s.licenses    = ['Gnu GPL']
+  s.summary     = 'implementation of oneop protocol'
+  s.description = 'oneop protocol is an encrypted chat protocol. \
+                   this gem comes with both client and server for this protocol'
+  s.authors     = ['Bartek Gladecki', 'Igor Matuszewski']
+  s.email       = ''
+  s.files       = ['lib/oneop.rb', 'lib/oneop/*']
+  s.homepage    = 'http://oneop.eu/'
+end
