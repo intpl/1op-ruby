@@ -4,6 +4,7 @@ require 'ffi-ncurses'
 
 Dir["./oneop/*.rb"].each {|file| require file }
 
+# initial const.
 DEBUG = true
 PORT = 31337
 HOST = "localhost"
@@ -18,12 +19,6 @@ else
 end
 
 if SERVER
-  #  waiter = Thread.new do
-  #    puts "To quit, press Enter."
-  #    gets
-  #    exit
-  #  end
-
   def log(msg, client = "")
     msg = msg
     msg += "[#{client}]" unless client.empty?
@@ -34,10 +29,9 @@ if SERVER
     return "1op:ruby-playground #{VERSION}"
   end
 
-  # this will be changed
-  server = TCPServer.new(31337)
-
-  log "server started." if server
+  if server = TCPServer.new(PORT)
+    log "server started." if server
+  end
 
   server_thread = Thread.new do
     while (session = server.accept)
@@ -61,7 +55,6 @@ if SERVER
 end
 
 if CLIENT
-  # client below
   begin
     server = TCPSocket.new(HOST, PORT)
     return unless server
