@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'socket'
+require 'rsa'
 require 'ffi-ncurses'
 
 Dir["./oneop/*.rb"].each {|file| require file }
