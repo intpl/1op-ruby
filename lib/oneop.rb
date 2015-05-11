@@ -19,41 +19,7 @@ else
   CLIENT = ARGV.include? '-c'
 end
 
-if SERVER
-  def log(msg, client = "")
-    msg = msg
-    msg += "[#{client}]" unless client.empty?
-    puts msg if DEBUG unless CLIENT
-  end
-
-  def greeting
-    return "1op:ruby-playground #{VERSION}"
-  end
-
-  if server = TCPServer.new(PORT)
-    log "server started." if server
-  end
-
-  server_thread = Thread.new do
-    while (session = server.accept)
-      Thread.new(session) do |my_session|
-        my_session.puts greeting
-        loop do
-          msg = my_session.gets.chomp
-          next if msg.empty?
-          log "received: #{msg}"
-          my_session.puts msg
-          log "sent: #{msg}"
-        end
-
-        log "closing session #{my_session}"
-        my_session.close
-      end
-    end
-  end
-
-  server_thread.join unless CLIENT
-end
+Server.new(CLIENT == true, PORT) if SERVER
 
 if CLIENT
   begin
