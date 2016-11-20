@@ -1,3 +1,5 @@
+---------> THIS PROJECT WAS NEVER FINISHED <---------
+
 # 1op (open once)
 
 ## Ruby 1op implementation
